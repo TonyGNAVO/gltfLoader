@@ -1,0 +1,34 @@
+{
+  "name": "dashboard",
+  "version": "8.0.0",
+  "description": "DashBoard",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --quiet",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "Brian Holt",
+  "license": "ISC",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "5.40.1",
+    "@typescript-eslint/parser": "5.40.1",
+    "@vitejs/plugin-react": "2.1.0",
+    "@vitest/coverage-c8": "^0.29.2",
+    "eslint": "8.24.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-import-resolver-typescript": "^3.5.1",
+    "typescript": "4.8.4",
+    "vite": "3.1.4",
+    "vitest": "^0.29.2"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
+}
