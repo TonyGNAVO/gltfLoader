@@ -1,7 +1,7 @@
 export class BufferGeometry {
 
     attributes :BufferAttributes | null= null
-    index?:ArrayBuffer
+    index?:BufferAttribute
 
     setAttributes(attribute:BufferAttributeName,arrayBuffer :ArrayBuffer){
         if(!(attribute in BufferAttributeName))

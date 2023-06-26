@@ -40,6 +40,11 @@ export class GetBufferGeometry{
                 continue;
             }
         }
+        if (primitive.indices){
+            const accessor = accessors[primitive.indices]
+            const  bufferViews =  await new GetBufferView().execute(accessor,GLTFBufferViews,buffers,resourceURL)
+            bufferGeometry.index={array:bufferViews}
+        }
 
         return bufferGeometry;
     }

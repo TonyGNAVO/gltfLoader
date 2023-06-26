@@ -15,6 +15,7 @@ export type GLTFBuffer = {
 
 export type GLTFPrimitive = {
     attributes : GLTFAttributes
+    indices?:number
 }
 
  type GLTFAttributes = {
@@ -23,4 +24,8 @@ export type GLTFPrimitive = {
     TEXCOORD_0?:number,
     COLOR_0?:number
     TANGANT?:number
+}
+
+export type GLTFMesh = {
+    primitives:GLTFPrimitive[]
 }
