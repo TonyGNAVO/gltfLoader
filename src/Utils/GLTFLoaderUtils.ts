@@ -29,3 +29,7 @@ export type GLTFPrimitive = {
 export type GLTFMesh = {
     primitives:GLTFPrimitive[]
 }
+
+export type GLTFNode = {
+   mesh?:number, 
+}
