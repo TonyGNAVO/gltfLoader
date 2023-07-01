@@ -2,7 +2,7 @@ import { Mesh } from "../Entities/Mesh";
 import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFMesh, GLTFNode} from "../Utils/GLTFLoaderUtils";
 import { GetMesh } from "./getMesh";
 
-class GetElementFromGLTFNode{
+export class GetElementFromGLTFNode{
     async execute(
         gLTFNode: GLTFNode, 
         meshes:  GLTFMesh[],

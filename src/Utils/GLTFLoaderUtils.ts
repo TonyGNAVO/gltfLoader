@@ -33,3 +33,7 @@ export type GLTFMesh = {
 export type GLTFNode = {
    mesh?:number, 
 }
+
+export type GLTFScene = {
+    nodes?:number[],
+ }
