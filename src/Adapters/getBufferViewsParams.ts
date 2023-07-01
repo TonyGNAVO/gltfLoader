@@ -4,8 +4,10 @@ import { pathToArrayBufferConverter } from "./pathToArrayBufferConverter";
 
 export class GetBufferViewsParams{
 
+    //TODO => optimize. Looking for bin only one time
     async execute(accessor:GLTFAccessor,bufferViews : GLTFBufferView[],buffers : GLTFBuffer[], resourceURL:string) :Promise<BufferViewParams>{
-        if(!accessor.bufferView)
+        
+        if(accessor.bufferView==undefined)
             throw new Error("The GLTF accessor does not point to any bufferView.")
 
         const bufferView= bufferViews[accessor.bufferView]
@@ -23,6 +25,7 @@ export class GetBufferViewsParams{
         byteOffset=0;
 
         return {
+           count : accessor.count,
            byteLength: bufferView.byteLength,
            byteOffset,
            buffer : arrayBuffer,

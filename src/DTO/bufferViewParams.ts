@@ -1,7 +1,7 @@
 export type BufferViewParams = {
+    count:number,
     buffer : ArrayBuffer,
     byteOffset:number,
-    byteLength:number,
     componentType:number
 }
 

@@ -4,7 +4,7 @@ export class BufferGeometry {
     index?:BufferAttribute
 
     setAttributes(attribute:BufferAttributeName,arrayBuffer :ArrayBuffer){
-        if(!(attribute in BufferAttributeName))
+        if(!(Object.values(BufferAttributeName).some(val=>val===attribute)))
             throw new Error(`${attribute} is not a geometry attribute`)
 
         if(!this.attributes) 

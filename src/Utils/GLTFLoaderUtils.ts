@@ -1,6 +1,7 @@
 export type GLTFAccessor = {
+    componentType : number,
+    count:number,
     bufferView? : number,
-    componentType : number
 }
 
 export type GLTFBufferView = {

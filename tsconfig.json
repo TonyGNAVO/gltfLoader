@@ -13,6 +13,7 @@
         "src/**/*.tsx",
         "global.d.ts",
         "src/**/*.ts",
-        "src/UI/MainContent/.test.tsx"
+        "src/UI/MainContent/.test.tsx",
+        "src/main.ts"
     ]
 }

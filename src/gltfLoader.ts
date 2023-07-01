@@ -2,7 +2,7 @@ import { getGLTTFromGLTFJson } from "./Adapters/getGLTTFromGLTFJson";
 import { GLTF } from "./Entities/gLTF";
 import { GLTFJson } from "./Utils/GLTFLoaderUtils";
 
-class GLTFLoader {
+export class GLTFLoader {
 
     load =async(resourceURL:string,callback:(gltf:GLTF)=>void)=>{
 

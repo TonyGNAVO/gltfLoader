@@ -11,8 +11,7 @@ export class GetElementFromGLTFNode{
         buffers : GLTFBuffer[],
         resourceURL:string
         ):Promise<Mesh>{
-
-        if(gLTFNode.mesh){
+        if(gLTFNode.mesh!=undefined){
             return await new GetMesh().execute(meshes[gLTFNode.mesh],accessors,gLTFBufferViews,buffers,resourceURL);
         }else{
             return new Mesh();
