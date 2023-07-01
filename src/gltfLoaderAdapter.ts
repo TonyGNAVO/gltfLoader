@@ -1,20 +1,19 @@
+import { getGLTTFromGLTFJson } from "./Adapters/getGLTTFromGLTFJson";
+import { GLTF } from "./Entities/gLTF";
+import { GLTFJson } from "./Utils/GLTFLoaderUtils";
+
 class GLTFLoader {
 
-    constructor(){
+    load =async(resourceURL:string,callback:(gltf:GLTF)=>void)=>{
 
-    }
-
-    load =async(path:string,callback:()=>void)=>{
-
-        // mettre un try catch
-        const gltfResponse : Response  = await fetch(path);
-        const gltfText  = await gltfResponse.text();
-        const gltfJSON  = <JSON>JSON.parse(gltfText);
-        
-        // 1 scene + 1 noeuds
-
-        
-    
-        // retourner une liste une liste de mesh
+        try{
+            const gltfResponse : Response  = await fetch(resourceURL);
+            const gltfText  = await gltfResponse.text();
+            const gltfJSON  = <GLTFJson>JSON.parse(gltfText);
+            const gltf = await new  getGLTTFromGLTFJson().execute(gltfJSON,resourceURL);
+            callback(gltf)
+        }catch(error){
+            console.log(error)
+        }
     }
 }
