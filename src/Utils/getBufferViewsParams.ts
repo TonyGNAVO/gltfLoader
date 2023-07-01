@@ -26,7 +26,6 @@ export class GetBufferViewsParams{
 
         return {
            count : accessor.count,
-           byteLength: bufferView.byteLength,
            byteOffset,
            buffer : arrayBuffer,
            componentType : accessor.componentType

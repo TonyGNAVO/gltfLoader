@@ -1,4 +1,4 @@
-import { getGLTTFromGLTFJson } from "./Adapters/getGLTTFromGLTFJson";
+import { getGLTTFromGLTFJson } from "./Utils/getGLTTFromGLTFJson";
 import { GLTF } from "./Entities/gLTF";
 import { GLTFJson } from "./Utils/GLTFLoaderUtils";
 
