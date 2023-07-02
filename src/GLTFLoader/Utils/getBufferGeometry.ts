@@ -1,4 +1,4 @@
-import { BufferAttributeName, BufferGeometry } from "../Entities/bufferGeometry";
+import { BufferAttributeName, BufferGeometry } from "../../Entities/bufferGeometry";
 import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFPrimitive } from "./GLTFLoaderUtils";
 import { GetBufferView } from "./getBufferView";
 

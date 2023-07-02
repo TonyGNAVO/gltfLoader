@@ -1,4 +1,4 @@
-import { Scene } from "../Entities/scene";
+import { Scene } from "../../Entities/scene";
 import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFMesh,  GLTFNode,  GLTFScene} from "./GLTFLoaderUtils";
 import { GetElementFromGLTFNode } from "./getElementFromGLTFNode";
 

@@ -1,5 +1,5 @@
 import { getGLTTFromGLTFJson } from "./Utils/getGLTTFromGLTFJson";
-import { GLTF } from "./Entities/gLTF";
+import { GLTF } from "../Entities/gLTF";
 import { GLTFJson } from "./Utils/GLTFLoaderUtils";
 
 export class GLTFLoader {
