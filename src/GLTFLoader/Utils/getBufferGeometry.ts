@@ -1,5 +1,5 @@
 import { BufferAttributeName, BufferGeometry } from "../Entities/bufferGeometry";
-import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFPrimitive } from "../Utils/GLTFLoaderUtils";
+import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFPrimitive } from "./GLTFLoaderUtils";
 import { GetBufferView } from "./getBufferView";
 
 export class GetBufferGeometry{

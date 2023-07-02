@@ -1,4 +1,4 @@
-import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from "../Utils/GLTFLoaderUtils";
+import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from "./GLTFLoaderUtils";
 import { ArrayBufferConverter } from "./bufferViewsParamsToBufferViewsConverter";
 import { GetBufferViewsParams } from "./getBufferViewsParams";
 

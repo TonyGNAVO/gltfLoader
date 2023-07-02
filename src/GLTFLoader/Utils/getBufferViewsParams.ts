@@ -1,5 +1,5 @@
 import BufferViewParams from "../DTO/bufferViewParams";
-import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from "../Utils/GLTFLoaderUtils";
+import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from "./GLTFLoaderUtils";
 import { pathToArrayBufferConverter } from "./pathToArrayBufferConverter";
 
 export class GetBufferViewsParams{
