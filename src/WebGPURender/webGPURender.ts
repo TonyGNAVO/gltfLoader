@@ -9,17 +9,18 @@ class WebGPURenderer{
 
     render(scene:Scene){
      // traverser comme un bourrin toutes la scène pour chopper les primitives et exécuter toutes les commandes
+     // creer une pipeline par défault la plus stricte et plus performante.
     
 
     }
 
     public static async createInstance(descriptor: WebGPUDescriptor):Promise<WebGPURenderer>{
         const renderer = new WebGPURenderer();
-        await renderer.initialize(descriptor);
+        await renderer.initialize(descriptor,renderer);
         return renderer;
     }
 
-    public async initialize(descriptor: WebGPUDescriptor){
+    public async initialize(descriptor: WebGPUDescriptor,renderer:WebGPURenderer){
         if (!navigator.gpu)
             throw new Error('Not Support WebGPU')
         const adapter = await navigator.gpu.requestAdapter()
@@ -27,9 +28,9 @@ class WebGPURenderer{
             throw new Error('No Adapter Found')
 
         //set Device
-        this.device = await adapter.requestDevice()
+        renderer.device = await adapter.requestDevice()
 
         //set context
-        this.context = descriptor.canvas.getContext('webgpu') as GPUCanvasContext
+        renderer.context = descriptor.canvas.getContext('webgpu') as GPUCanvasContext
     }
 }
