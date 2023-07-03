@@ -1,3 +1,3 @@
-export type WebGPUDescriptor ={
-    canvas: HTMLCanvasElement
-}
+export type WebGPUDescriptor = {
+    canvas: HTMLCanvasElement;
+};

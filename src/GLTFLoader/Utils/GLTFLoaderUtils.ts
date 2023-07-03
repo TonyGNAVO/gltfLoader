@@ -1,49 +1,49 @@
 export type GLTFAccessor = {
-    componentType : number,
-    count:number,
-    bufferView? : number,
-}
+    componentType: number;
+    count: number;
+    bufferView?: number;
+};
 
 export type GLTFBufferView = {
-    buffer : number,
-    byteOffset? : number,
-    byteLength :number
-}
+    buffer: number;
+    byteOffset?: number;
+    byteLength: number;
+};
 
 export type GLTFBuffer = {
-    uri? : string
-}
+    uri?: string;
+};
 
 export type GLTFPrimitive = {
-    attributes : GLTFAttributes
-    indices?:number
-}
+    attributes: GLTFAttributes;
+    indices?: number;
+};
 
- type GLTFAttributes = {
-    POSITION : number,
-    NORMAL? : number,
-    TEXCOORD_0?:number,
-    COLOR_0?:number,
-    TANGANT?:number
-}
+type GLTFAttributes = {
+    POSITION: number;
+    NORMAL?: number;
+    TEXCOORD_0?: number;
+    COLOR_0?: number;
+    TANGANT?: number;
+};
 
 export type GLTFMesh = {
-    primitives:GLTFPrimitive[]
-}
+    primitives: GLTFPrimitive[];
+};
 
 export type GLTFNode = {
-   mesh?:number, 
-}
+    mesh?: number;
+};
 
 export type GLTFScene = {
-    nodes?:number[],
-}
+    nodes?: number[];
+};
 
 export type GLTFJson = {
-    scenes?: GLTFScene[],
-    nodes?:GLTFNode[],
-    meshes?:GLTFMesh[],
-    accessors?:GLTFAccessor[],
-    bufferViews?:GLTFBufferView[],
-    buffers?:GLTFBuffer[]
-}
+    scenes?: GLTFScene[];
+    nodes?: GLTFNode[];
+    meshes?: GLTFMesh[];
+    accessors?: GLTFAccessor[];
+    bufferViews?: GLTFBufferView[];
+    buffers?: GLTFBuffer[];
+};

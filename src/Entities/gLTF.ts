@@ -1,6 +1,5 @@
-import { Scene } from "./scene";
+import { Scene } from './scene';
 
 export class GLTF {
-    scenes  : Scene[] = []
-
+    scenes: Scene[] = [];
 }

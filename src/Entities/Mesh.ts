@@ -1,5 +1,5 @@
-import { BufferGeometry } from "./bufferGeometry";
+import { BufferGeometry } from './bufferGeometry';
 
 export class Mesh {
-    primitives : BufferGeometry[] =[]
+    primitives: BufferGeometry[] = [];
 }

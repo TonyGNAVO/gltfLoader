@@ -1,36 +1,38 @@
-import BufferViewParams from "../DTO/bufferViewParams";
-import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from "./gLTFLoaderUtils";
-import { pathToArrayBufferConverter } from "./pathToArrayBufferConverter";
+import BufferViewParams from '../DTO/bufferViewParams';
+import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from './gLTFLoaderUtils';
+import { pathToArrayBufferConverter } from './pathToArrayBufferConverter';
 
-export class GetBufferViewsParams{
-
+export class GetBufferViewsParams {
     //TODO => optimize. Looking for bin only one time
-    async execute(accessor:GLTFAccessor,bufferViews : GLTFBufferView[],buffers : GLTFBuffer[], resourceURL:string) :Promise<BufferViewParams>{
-        
-        if(accessor.bufferView==undefined)
-            throw new Error("The GLTF accessor does not point to any bufferView.")
+    async execute(
+        accessor: GLTFAccessor,
+        bufferViews: GLTFBufferView[],
+        buffers: GLTFBuffer[],
+        resourceURL: string,
+    ): Promise<BufferViewParams> {
+        if (accessor.bufferView == undefined)
+            throw new Error(
+                'The GLTF accessor does not point to any bufferView.',
+            );
 
-        const bufferView= bufferViews[accessor.bufferView]
-        const buffer = buffers[bufferView.buffer]
+        const bufferView = bufferViews[accessor.bufferView];
+        const buffer = buffers[bufferView.buffer];
 
-        if(!buffer.uri)
-            throw new Error("The GLTF buffer does not have a URI.")
+        if (!buffer.uri)
+            throw new Error('The GLTF buffer does not have a URI.');
 
-        const bufferURI = resourceURL.replace(/gltf$/, "bin");
-        const converter =  new pathToArrayBufferConverter();
-        const arrayBuffer = await converter.convert(bufferURI)
+        const bufferURI = resourceURL.replace(/gltf$/, 'bin');
+        const converter = new pathToArrayBufferConverter();
+        const arrayBuffer = await converter.convert(bufferURI);
         let byteOffset = bufferView.byteOffset;
 
-        if(!byteOffset)
-        byteOffset=0;
+        if (!byteOffset) byteOffset = 0;
 
         return {
-           count : accessor.count,
-           byteOffset,
-           buffer : arrayBuffer,
-           componentType : accessor.componentType
-        }
-
-
-    }   
+            count: accessor.count,
+            byteOffset,
+            buffer: arrayBuffer,
+            componentType: accessor.componentType,
+        };
+    }
 }

@@ -1,8 +1,6 @@
-import { Mesh } from "./Mesh";
+import { Mesh } from './Mesh';
 
 export class Scene {
-    children : Mesh[] =[];
-    add(){
-        
-    }
+    children: Mesh[] = [];
+    add() {}
 }
