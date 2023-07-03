@@ -1,6 +1,6 @@
 
 import { Mesh } from "../../Entities/Mesh";
-import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFMesh} from "./GLTFLoaderUtils";
+import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFMesh} from "./gLTFLoaderUtils";
 import { GetBufferGeometry } from "./getBufferGeometry";
 
 export class GetMesh {

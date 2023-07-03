@@ -6,12 +6,19 @@ class WebGPURenderer{
     
     private device : GPUDevice|null =null;
     private context : GPUCanvasContext|null =null
+    //initialisation au départ d'une pipeline pour chaque mesh => doit se faire à l'initialisation de la mesh
+    //comme ça le render s'occupe seulement de prendre la pipeline de la mesh pour faire le rendu
+    //possibilité de changer la pipeline seulement à partir d'une mééthode spécial
+    
+    
 
     render(scene:Scene){
      // traverser comme un bourrin toutes la scène pour chopper les primitives et exécuter toutes les commandes
      // creer une pipeline par défault la plus stricte et plus performante.
-    
 
+     // pipeline
+     //prendre en compte l'index
+    
     }
 
     public static async createInstance(descriptor: WebGPUDescriptor):Promise<WebGPURenderer>{

@@ -1,5 +1,5 @@
 import { Mesh } from "../../Entities/Mesh";
-import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFMesh, GLTFNode} from "./GLTFLoaderUtils";
+import { GLTFAccessor, GLTFBuffer, GLTFBufferView, GLTFMesh, GLTFNode} from "./gLTFLoaderUtils";
 import { GetMesh } from "./getMesh";
 
 export class GetElementFromGLTFNode{
