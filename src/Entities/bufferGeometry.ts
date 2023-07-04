@@ -1,13 +1,27 @@
+import { Device } from './primitivCore';
+
 export class BufferGeometry {
     attributes: BufferAttributes | null = null;
     index?: BufferAttribute;
-    renderPipeline: GPURenderPipeline;
-    constructor() {
-        this.renderPipeline;
-        //con,struction d'une pipeline
+    private renderPipeline: GPURenderPipeline | null = null;
+    private constructor() {
+        // tjs
+        // const device = Device.getInstance();
+        //construction d'une pipeline
         // construire la pipeline
         // créer des veRTEXbUFFER
+    }
 
+    static async getInstance(): Promise<BufferGeometry> {
+        const bufferGeometry = new BufferGeometry();
+        const device = await Device.getInstance();
+        if (!device) {
+            return bufferGeometry;
+        }
+        bufferGeometry.renderPipeline = device?.createRenderPipeline({});
+
+        // return une instance de buffergeometry
+        return bufferGeometry;
     }
 
     setAttributes(attribute: BufferAttributeName, arrayBuffer: ArrayBuffer) {

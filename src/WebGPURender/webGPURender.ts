@@ -16,11 +16,9 @@ class WebGPURenderer {
         //ne pas oublier la profondeur map
     }
 
-    public static async createInstance(
-        descriptor: WebGPUDescriptor,
-    ): Promise<WebGPURenderer> {
+    public static createInstance(descriptor: WebGPUDescriptor): WebGPURenderer {
         const renderer = new WebGPURenderer();
-        await renderer.initialize(descriptor, renderer);
+        renderer.initialize(descriptor, renderer);
         return renderer;
     }
 

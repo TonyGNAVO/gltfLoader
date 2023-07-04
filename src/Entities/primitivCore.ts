@@ -1,17 +1,17 @@
 class PrimitivCore {}
 
-class Device {
-    private static gpuDevice: GPUDevice | null = null;
+export class Device {
+    private static gPUDevice: GPUDevice | null = null;
 
-    constructor() {}
+    private constructor() {}
 
-    static async getInstance(): Promise<GPUDevice|null> {
-        if (!this.gpuDevice) {
+    static async getInstance(): Promise<GPUDevice | null> {
+        if (!this.gPUDevice) {
             if (!navigator.gpu) throw new Error('Not Support WebGPU');
             const adapter = await navigator.gpu.requestAdapter();
             if (!adapter) throw new Error('No Adapter Found');
-            this.gpuDevice = await adapter.requestDevice();
+            this.gPUDevice = await adapter.requestDevice();
         }
-        return Device.gpuDevice;
+        return Device.gPUDevice;
     }
 }
