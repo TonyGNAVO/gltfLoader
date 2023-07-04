@@ -1,7 +1,14 @@
 export class BufferGeometry {
     attributes: BufferAttributes | null = null;
     index?: BufferAttribute;
-    pipeline: GPURenderPipeline | null = null;
+    renderPipeline: GPURenderPipeline;
+    constructor() {
+        this.renderPipeline;
+        //con,struction d'une pipeline
+        // construire la pipeline
+        // créer des veRTEXbUFFER
+
+    }
 
     setAttributes(attribute: BufferAttributeName, arrayBuffer: ArrayBuffer) {
         if (

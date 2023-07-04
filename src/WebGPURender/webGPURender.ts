@@ -24,17 +24,7 @@ class WebGPURenderer {
         return renderer;
     }
 
-    public async initialize(
-        descriptor: WebGPUDescriptor,
-        renderer: WebGPURenderer,
-    ) {
-        if (!navigator.gpu) throw new Error('Not Support WebGPU');
-        const adapter = await navigator.gpu.requestAdapter();
-        if (!adapter) throw new Error('No Adapter Found');
-
-        //set Device
-        renderer.device = await adapter.requestDevice();
-
+    public initialize(descriptor: WebGPUDescriptor, renderer: WebGPURenderer) {
         //set context
         renderer.context = descriptor.canvas.getContext(
             'webgpu',
