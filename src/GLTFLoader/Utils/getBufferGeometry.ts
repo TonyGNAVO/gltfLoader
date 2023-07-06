@@ -18,7 +18,7 @@ export class GetBufferGeometry {
         buffers: GLTFBuffer[],
         resourceURL: string,
     ): Promise<BufferGeometry> {
-        const bufferGeometry = await BufferGeometry.getInstance();
+        const bufferGeometry = new BufferGeometry();
 
         for await (const [key, value] of Object.entries(primitive.attributes)) {
             if (key === 'POSITION') {

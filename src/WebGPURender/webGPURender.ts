@@ -9,6 +9,8 @@ class WebGPURenderer {
     //possibilité de changer la pipeline seulement à partir d'une mééthode spécial
 
     render(scene: Scene) {
+        // le premier rendu doit permette de créer la pipeline, la au niveau de la création de l'instance car on ne connait pas
+        //comment construire l'attribut buffer du vertex de la pipeline
         // traverser comme un bourrin toutes la scène pour chopper les primitives et exécuter toutes les commandes
         // creer une pipeline par défault la plus stricte et plus performante.
         // pipeline
