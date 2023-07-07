@@ -5,7 +5,7 @@ export class PrimitivCoreUtils {
 
     static async init() {
         if (!navigator.gpu) throw new Error('Not Support WebGPU');
-        const adapter = await navigator.gpu.requestAdapter();
+        const adapter = await navigator.gpu.requestAdapter({});
         if (!adapter) throw new Error('No Adapter Found');
         this.gPUDevice = await adapter.requestDevice();
     }

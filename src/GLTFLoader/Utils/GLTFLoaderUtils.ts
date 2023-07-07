@@ -2,7 +2,15 @@ export type GLTFAccessor = {
     componentType: number;
     count: number;
     bufferView?: number;
+    type: GLTFType;
 };
+
+export enum GLTFType {
+    SCALAR = 'SCALAR',
+    VEC2 = 'VEC2',
+    VEC3 = 'VEC3',
+    VEC4 = 'VEC4',
+}
 
 export type GLTFBufferView = {
     buffer: number;

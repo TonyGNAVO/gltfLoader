@@ -1,20 +1,20 @@
 export class BufferGeometry {
-    attributes: BufferAttributes | undefined = undefined;
+    attributes: BufferAttributes = {};
     index?: BufferAttribute;
+    renderPipeline: GPURenderPipeline | null = null;
 
-    setAttributes(attribute: BufferAttributeName, arrayBuffer: ArrayBuffer) {
+    setAttributes(
+        attribute: BufferAttributeName,
+        arrayBuffer: ArrayBuffer,
+        component: number,
+    ) {
         if (
             !Object.values(BufferAttributeName).some((val) => val === attribute)
         )
             throw new Error(`${attribute} is not a geometry attribute`);
 
-        if (!this.attributes) this.attributes = {};
-
-        this.attributes[attribute] = { array: arrayBuffer };
+        this.attributes[attribute] = { array: arrayBuffer, component };
     }
-
-    // quand je set une valeur, je créer un nouvelle pipeline et je la mets à jour
-    // arraystride some 4*nombre de composant looper.
 }
 
 class BufferAttributes {
@@ -25,8 +25,9 @@ class BufferAttributes {
     tangent?: BufferAttribute;
 }
 
-class BufferAttribute {
+export class BufferAttribute {
     array?: ArrayBuffer;
+    component?: number;
 }
 
 export enum BufferAttributeName {
