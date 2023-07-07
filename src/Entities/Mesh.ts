@@ -1,4 +1,4 @@
-import { BufferAttribute, BufferGeometry } from './bufferGeometry';
+import { BufferAttribute, BufferAttributeName, BufferGeometry } from './bufferGeometry';
 import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
@@ -57,6 +57,7 @@ export class Mesh {
                 module: device.createShaderModule({
                     code: vertexShader,
                 }),
+                buffers:[]
             },
             layout: 'auto',
             label: 'BufferGeometryPipeline',
@@ -93,5 +94,16 @@ export class Mesh {
             return component * 2;
         }
         return component;
+    }
+
+    private getFormat(arrayBuffer: ArrayBuffer,component: number):string{
+        return "q"
+    }
+
+    private getShaderLocation(attr:string) : number{
+
+        // se servir de l'enum BufferAttibuteName pour faire le test
+        // BufferAttributeName
+        return 0;
     }
 }
