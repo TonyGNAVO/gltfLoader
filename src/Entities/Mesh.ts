@@ -14,15 +14,10 @@ export class Mesh {
         this.primitives = primitives;
         for (const bufferGeometry of this.primitives) {
             bufferGeometry.renderPipeline = this.getPipeline(bufferGeometry);
+            // constituer une nouvelle liste de vertex avec tous les attributes dans l'ordre
         }
-    }
 
-    private computegPUBufferLayout() {
-        // const arrayStride = 0; // à chaque itération, on incrémente la valeur
-        // const offset = 0;
-        // const attributes: GPUVertexAttribute[] = [];
-        // console.log(this.primitives[0].attributes);
-        // qu'est ce qu'on récupère?
+        // TODO création d'un vertex buffer
     }
 
     private getPipeline(bufferGeometry: BufferGeometry): GPURenderPipeline {
@@ -51,13 +46,16 @@ export class Mesh {
                 value.component,
             ) as GPUVertexFormat;
 
+            // Todo le shader location doit être dynamique
+
             const shaderLocation = this.getShaderLocation(attr);
 
-            // setter le bon shader location en fonction de l'attribut et le fomat en fonction du component et du type de buffer
             attributes.push({ offset, shaderLocation, format });
 
             offset += byteSize;
         }
+
+        // prendre un buffer géant
 
         const gPUVertexBufferLayout: GPUVertexBufferLayout[] = [
             {
@@ -65,6 +63,8 @@ export class Mesh {
                 attributes,
             },
         ];
+
+        //setter le bon shader avec la bonne location dynamique
         return device.createRenderPipeline({
             vertex: {
                 entryPoint: 'vs_main',
@@ -130,16 +130,18 @@ export class Mesh {
         return `${type}x${component}`;
     }
 
+    // Todo le shader location doit être dynamique
     private getShaderLocation(attr: string): number {
         if (attr === BufferAttributeName.POSITION) {
             return 0;
         }
-        if (attr === BufferAttributeName.TEXCOORD) {
-            return 1;
-        }
         if (attr === BufferAttributeName.NORMAL) {
+            return 2;
+        }
+        if (attr === BufferAttributeName.TEXCOORD) {
             return 3;
         }
+
         if (attr === BufferAttributeName.COLOR) {
             return 4;
         }
