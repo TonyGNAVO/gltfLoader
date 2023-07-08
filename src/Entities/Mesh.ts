@@ -1,4 +1,8 @@
-import { BufferAttribute, BufferAttributeName, BufferGeometry } from './bufferGeometry';
+import {
+    BufferAttribute,
+    BufferAttributeName,
+    BufferGeometry,
+} from './bufferGeometry';
 import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
@@ -26,7 +30,7 @@ export class Mesh {
         const format = PrimitivCoreUtils.get_gPUTextureFormat();
 
         let offset = 0;
-        let arraystride = 0;
+        let arrayStride = 0;
         const attributes: GPUVertexAttribute[] = [];
 
         for (const [attr, value] of Object.entries(bufferGeometry.attributes)) {
@@ -40,24 +44,34 @@ export class Mesh {
                 value.array,
                 value.component,
             );
-            arraystride += byteSize;
+            arrayStride += byteSize;
+
+            const format = this.getFormat(
+                value.array,
+                value.component,
+            ) as GPUVertexFormat;
+
+            const shaderLocation = this.getShaderLocation(attr);
 
             // setter le bon shader location en fonction de l'attribut et le fomat en fonction du component et du type de buffer
-            attributes.push({ offset });
+            attributes.push({ offset, shaderLocation, format });
 
             offset += byteSize;
         }
 
-        //construire un objet de type tableau de GPUVertexBufferLayout
-        //setter cette objet dans la pipeline
-        //construire un shader capable d'accueillir les attributs présents dans la papeline: convertir un shaderlocation en attribut disponible
+        const gPUVertexBufferLayout: GPUVertexBufferLayout[] = [
+            {
+                arrayStride,
+                attributes,
+            },
+        ];
         return device.createRenderPipeline({
             vertex: {
                 entryPoint: 'vs_main',
                 module: device.createShaderModule({
                     code: vertexShader,
                 }),
-                buffers:[]
+                buffers: gPUVertexBufferLayout,
             },
             layout: 'auto',
             label: 'BufferGeometryPipeline',
@@ -96,14 +110,42 @@ export class Mesh {
         return component;
     }
 
-    private getFormat(arrayBuffer: ArrayBuffer,component: number):string{
-        return "q"
+    private getFormat(arrayBuffer: ArrayBuffer, component: number): string {
+        let type;
+        if (arrayBuffer instanceof Float32Array) {
+            type = 'float32';
+        } else if (arrayBuffer instanceof Uint32Array) {
+            type = 'uint32';
+        } else if (arrayBuffer instanceof Int16Array) {
+            type = 'sint16';
+        } else if (arrayBuffer instanceof Uint16Array) {
+            type = 'uint16';
+        } else if (arrayBuffer instanceof Int8Array) {
+            type = 'sint8';
+        } else if (arrayBuffer instanceof Uint8Array) {
+            type = 'uint8';
+        } else {
+            throw new Error('the type of the arraybuffer is not known');
+        }
+        return `${type}x${component}`;
     }
 
-    private getShaderLocation(attr:string) : number{
-
-        // se servir de l'enum BufferAttibuteName pour faire le test
-        // BufferAttributeName
-        return 0;
+    private getShaderLocation(attr: string): number {
+        if (attr === BufferAttributeName.POSITION) {
+            return 0;
+        }
+        if (attr === BufferAttributeName.TEXCOORD) {
+            return 1;
+        }
+        if (attr === BufferAttributeName.NORMAL) {
+            return 3;
+        }
+        if (attr === BufferAttributeName.COLOR) {
+            return 4;
+        }
+        if (attr === BufferAttributeName.TANGENT) {
+            return 5;
+        }
+        throw new Error(`the attribute ${attr} is unknow`);
     }
 }
