@@ -3,7 +3,6 @@ import { GLTFAccessor, GLTFBuffer, GLTFBufferView } from './gLTFLoaderUtils';
 import { pathToArrayBufferConverter } from './pathToArrayBufferConverter';
 
 export class GetBufferViewsParams {
-    //TODO => optimize. Looking for bin only one time
     async execute(
         accessor: GLTFAccessor,
         bufferViews: GLTFBufferView[],
@@ -15,7 +14,9 @@ export class GetBufferViewsParams {
                 'The GLTF accessor does not point to any bufferView.',
             );
 
+            
         const bufferView = bufferViews[accessor.bufferView];
+        const byteLength = bufferView.byteLength;
         const buffer = buffers[bufferView.buffer];
 
         if (!buffer.uri)
@@ -28,11 +29,18 @@ export class GetBufferViewsParams {
 
         if (!byteOffset) byteOffset = 0;
 
+        console.log({
+            count: accessor.count,
+            byteOffset,
+            buffer: arrayBuffer,
+            componentType: accessor.componentType,
+        })
         return {
             count: accessor.count,
             byteOffset,
             buffer: arrayBuffer,
             componentType: accessor.componentType,
+            byteLength
         };
     }
 }
