@@ -1,8 +1,4 @@
-import {
-    BufferAttribute,
-    BufferAttributeName,
-    BufferGeometry,
-} from './bufferGeometry';
+import { BufferAttributeName, BufferGeometry } from './bufferGeometry';
 import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
@@ -13,15 +9,12 @@ export class Mesh {
     constructor(primitives: BufferGeometry[]) {
         this.primitives = primitives;
         for (const bufferGeometry of this.primitives) {
-            bufferGeometry.renderPipeline = this.getPipeline(bufferGeometry);
-            // constituer une nouvelle liste de vertex avec tous les attributes dans l'ordre
-            //l'ordre doit être exactement le même que celui des shaderLocation
+            this.enableBuffergeometry(bufferGeometry);
         }
-
-        // TODO création d'un vertex buffer
     }
 
-    private getPipeline(bufferGeometry: BufferGeometry): GPURenderPipeline {
+    private enableBuffergeometry(bufferGeometry: BufferGeometry){
+
         const device = PrimitivCoreUtils.get_gPUDevice();
         const format = PrimitivCoreUtils.get_gPUTextureFormat();
 
@@ -29,6 +22,8 @@ export class Mesh {
         let offsetNumber = 0;
         let arrayStride = 0;
         let vertexSize = 0;
+        let shaderLocation=0;
+
         const attributes: GPUVertexAttribute[] = [];
 
         for (const [attr, value] of Object.entries(bufferGeometry.attributes)) {
@@ -40,18 +35,16 @@ export class Mesh {
                 value.array,
                 value.component,
             );
-
             arrayStride += byteSize;
             vertexSize += value.component;
-
-            // Creation of big buffer with all vertex attribute
-            bufferGeometry.vertexArrayBuffer = new Float32Array(
-                vertexSize * bufferGeometry.count,
-            );
             /* eslint-enable @typescript-eslint/no-unsafe-assignment */
         }
 
-        // déterminer mon byteSize des le départ avec une boucle for.
+        // Creation of big buffer with all vertex attribute
+        bufferGeometry.vertexArrayBuffer = new Float32Array(
+            vertexSize * bufferGeometry.count,
+        );
+
 
         for (const [attr, value] of Object.entries(bufferGeometry.attributes)) {
             /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -63,19 +56,14 @@ export class Mesh {
                 value.array,
                 value.component,
             );
-
             const format = this.getFormat(
                 value.array,
                 value.component,
             ) as GPUVertexFormat;
 
-            // Todo le shader location doit être dynamique => incrémental
-            const shaderLocation = this.getShaderLocation(attr);
-
-            // build "attributes" attribut for buffer attribut.
             attributes.push({ offset, shaderLocation, format });
 
-  console.log(attr)
+            // fill the array with all attribute values of each vertex
             this.setAttributeToBuffer(
                 value.array,
                 bufferGeometry.vertexArrayBuffer,
@@ -86,6 +74,7 @@ export class Mesh {
 
             offset += byteSize;
             offsetNumber += value.component;
+            shaderLocation++
             /* eslint-enable @typescript-eslint/no-unsafe-assignment */
         }
 
@@ -96,8 +85,9 @@ export class Mesh {
             },
         ];
 
-        //setter le bon shader avec la bonne location dynamique
-        return device.createRenderPipeline({
+        // TODO: build a shader according to the attribute to get value into shader
+        // build renderPipeline
+        bufferGeometry.renderPipeline = device.createRenderPipeline({
             vertex: {
                 entryPoint: 'vs_main',
                 module: device.createShaderModule({
@@ -162,27 +152,6 @@ export class Mesh {
         return `${type}x${component}`;
     }
 
-    // Todo le shader location doit être dynamique
-    private getShaderLocation(attr: string): number {
-        if (attr === BufferAttributeName.POSITION) {
-            return 0;
-        }
-        if (attr === BufferAttributeName.NORMAL) {
-            return 2;
-        }
-        if (attr === BufferAttributeName.TEXCOORD) {
-            return 3;
-        }
-
-        if (attr === BufferAttributeName.COLOR) {
-            return 4;
-        }
-        if (attr === BufferAttributeName.TANGENT) {
-            return 5;
-        }
-        throw new Error(`the attribute ${attr} is unknow`);
-    }
-
     private setAttributeToBuffer(
         source:
             | Float32Array
@@ -198,10 +167,7 @@ export class Mesh {
     ) {
         for (let i = 0; i < source.length / component; i++) {
             const buff = source.slice(i * component, i * component + component);
-            // prendre les composants d'un point et les placer à l'offset * count
-            //=> le nombre d'itération est le count
             target.set(buff, i * vertexSize + offset);
         }
-        //l'offset n'est pas en byte
     }
 }
