@@ -13,8 +13,7 @@ export class Mesh {
         }
     }
 
-    private enableBuffergeometry(bufferGeometry: BufferGeometry){
-
+    private enableBuffergeometry(bufferGeometry: BufferGeometry) {
         const device = PrimitivCoreUtils.get_gPUDevice();
         const format = PrimitivCoreUtils.get_gPUTextureFormat();
 
@@ -22,7 +21,7 @@ export class Mesh {
         let offsetNumber = 0;
         let arrayStride = 0;
         let vertexSize = 0;
-        let shaderLocation=0;
+        let shaderLocation = 0;
 
         const attributes: GPUVertexAttribute[] = [];
 
@@ -44,7 +43,6 @@ export class Mesh {
         bufferGeometry.vertexArrayBuffer = new Float32Array(
             vertexSize * bufferGeometry.count,
         );
-
 
         for (const [attr, value] of Object.entries(bufferGeometry.attributes)) {
             /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -74,7 +72,7 @@ export class Mesh {
 
             offset += byteSize;
             offsetNumber += value.component;
-            shaderLocation++
+            shaderLocation++;
             /* eslint-enable @typescript-eslint/no-unsafe-assignment */
         }
 
