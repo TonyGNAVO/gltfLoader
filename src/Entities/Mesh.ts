@@ -1,4 +1,4 @@
-import { BufferAttributeName, BufferGeometry } from './bufferGeometry';
+import { BufferGeometry } from './bufferGeometry';
 import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
