@@ -3,7 +3,7 @@ export type BufferViewParams = {
     buffer: ArrayBuffer;
     byteOffset: number;
     componentType: number;
-    byteLength:number;
+    byteLength: number;
 };
 
 export default BufferViewParams;

@@ -24,6 +24,8 @@ export class GetBufferGeometry {
         for await (const [key, value] of Object.entries(primitive.attributes)) {
             if (key === 'POSITION') {
                 const accessor = accessors[value];
+                // number of vertex
+                bufferGeometry.count = accessor.count;
                 const component = this.convertTypeToNumber(accessor);
                 const bufferViews = await new GetBufferView().execute(
                     accessor,

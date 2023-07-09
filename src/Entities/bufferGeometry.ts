@@ -1,7 +1,9 @@
 export class BufferGeometry {
     attributes: BufferAttributes = {};
+    vertexArrayBuffer: Float32Array = new Float32Array();
     index?: BufferAttribute;
     renderPipeline: GPURenderPipeline | null = null;
+    count: number = 0;
 
     setAttributes(
         attribute: BufferAttributeName,

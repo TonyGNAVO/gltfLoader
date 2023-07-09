@@ -8,37 +8,37 @@ export class ArrayBufferConverter {
                 return new Int8Array(
                     bufferViewParams.buffer,
                     bufferViewParams.byteOffset,
-                    bufferViewParams.byteLength ,
+                    bufferViewParams.byteLength,
                 );
             case 5121:
                 return new Uint8Array(
                     bufferViewParams.buffer,
                     bufferViewParams.byteOffset,
-                    bufferViewParams.byteLength ,
+                    bufferViewParams.byteLength,
                 );
             case 5122:
                 return new Int16Array(
                     bufferViewParams.buffer,
                     bufferViewParams.byteOffset,
-                    bufferViewParams.byteLength/2,
+                    bufferViewParams.byteLength / 2,
                 );
             case 5123:
                 return new Uint16Array(
                     bufferViewParams.buffer,
                     bufferViewParams.byteOffset,
-                    bufferViewParams.byteLength/2,
+                    bufferViewParams.byteLength / 2,
                 );
             case 5125:
                 return new Uint32Array(
                     bufferViewParams.buffer,
                     bufferViewParams.byteOffset,
-                    bufferViewParams.byteLength/4,
+                    bufferViewParams.byteLength / 4,
                 );
             case 5126:
                 return new Float32Array(
                     bufferViewParams.buffer,
                     bufferViewParams.byteOffset,
-                    bufferViewParams.byteLength/4,
+                    bufferViewParams.byteLength / 4,
                 );
             default:
                 return bufferViewParams.buffer;

@@ -14,7 +14,6 @@ export class GetBufferViewsParams {
                 'The GLTF accessor does not point to any bufferView.',
             );
 
-            
         const bufferView = bufferViews[accessor.bufferView];
         const byteLength = bufferView.byteLength;
         const buffer = buffers[bufferView.buffer];
@@ -28,19 +27,12 @@ export class GetBufferViewsParams {
         let byteOffset = bufferView.byteOffset;
 
         if (!byteOffset) byteOffset = 0;
-
-        console.log({
-            count: accessor.count,
-            byteOffset,
-            buffer: arrayBuffer,
-            componentType: accessor.componentType,
-        })
         return {
             count: accessor.count,
             byteOffset,
             buffer: arrayBuffer,
             componentType: accessor.componentType,
-            byteLength
+            byteLength,
         };
     }
 }
