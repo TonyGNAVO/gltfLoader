@@ -4,6 +4,8 @@ export class BufferGeometry {
     index?: BufferAttribute;
     renderPipeline: GPURenderPipeline | null = null;
     count: number = 0;
+    vertexBuffer: GPUBuffer | null = null;
+    indexBuffer: GPUBuffer | null = null;
 
     setAttributes(
         attribute: BufferAttributeName,
@@ -27,6 +29,10 @@ class BufferAttributes {
     tangent?: BufferAttribute;
 }
 
+interface ArrayLikeObject {
+    length: number;
+}
+  
 export class BufferAttribute {
     array?: ArrayBuffer;
     component?: number;

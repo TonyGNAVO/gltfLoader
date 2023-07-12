@@ -10,6 +10,8 @@ export class Mesh {
         this.primitives = primitives;
         for (const bufferGeometry of this.primitives) {
             this.enableBuffergeometry(bufferGeometry);
+            this.createVertexBuffer(bufferGeometry);
+            this.createIndexBuffer(bufferGeometry)
         }
     }
 
@@ -148,6 +150,40 @@ export class Mesh {
             throw new Error('the type of the arraybuffer is not known');
         }
         return `${type}x${component}`;
+    }
+
+    private createVertexBuffer(bufferGeometry: BufferGeometry) {
+        const device = PrimitivCoreUtils.get_gPUDevice();
+        bufferGeometry.vertexBuffer = device.createBuffer({
+            label: 'GPUBuffer store vertex',
+            size: bufferGeometry.vertexArrayBuffer.byteLength,
+            usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        });
+
+        device.queue.writeBuffer(
+            bufferGeometry.vertexBuffer,
+            0,
+            bufferGeometry.vertexArrayBuffer,
+        );
+    }
+
+    private createIndexBuffer(bufferGeometry: BufferGeometry) {
+        if (!bufferGeometry.index || !bufferGeometry.index.array) {
+            return;
+        }
+        const device = PrimitivCoreUtils.get_gPUDevice();
+
+        bufferGeometry.indexBuffer = device.createBuffer({
+            label: 'GPUBuffer store indices',
+            size: bufferGeometry.index.array?.byteLength,
+            usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
+        });
+
+        device.queue.writeBuffer(
+            bufferGeometry.indexBuffer,
+            0,
+            bufferGeometry.index.array,
+        );
     }
 
     private setAttributeToBuffer(

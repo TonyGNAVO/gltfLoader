@@ -8,16 +8,16 @@ class WebGPURenderer {
     private gPUDevice = PrimitivCoreUtils.get_gPUDevice();
     private format = PrimitivCoreUtils.get_gPUTextureFormat();
     private commandEncoder = this.gPUDevice.createCommandEncoder();
-    private passEncoder;
     private gPUCanvasContext: GPUCanvasContext;
     private depthView: GPUTextureView;
+    private gPURenderPassDescriptor: GPURenderPassDescriptor;
+    private renderPass: GPURenderPassEncoder|null=null;
     constructor(descriptor: WebGPUDescriptor) {
         const context = descriptor.canvas.getContext('webgpu');
         if (!context) throw new Error();
 
         this.gPUCanvasContext = context;
 
-        // 1er étape : construire la view / texture
         //____ création de la texture
         const texture: GPUTexture = this.gPUDevice.createTexture({
             format: this.format,
@@ -33,15 +33,7 @@ class WebGPURenderer {
         //____ création de la view
         this.depthView = texture.createView();
 
-        // 2ème étape :  construire une pipeline de texture
-
-        // 3ème étape : utiliser ces infos pour executer la pipeline dans la fonction render avec la liste de toutes les geometry réuni
-
-        /**
-         * Build passEncoder
-         */
-
-        this.passEncoder = this.commandEncoder.beginRenderPass({
+        this.gPURenderPassDescriptor = {
             colorAttachments: [
                 {
                     view: this.gPUCanvasContext
@@ -53,29 +45,47 @@ class WebGPURenderer {
                 },
             ],
             depthStencilAttachment: {
-                //rajouter la texture de profondeur=>création d'une pipeline seulement pour la profondeur
-                // paramètre à mettre dans le constructeur pour savoir si on fait un test de profondeur.
-                view: pipelineObj.depthView,
+                view: this.depthView,
                 depthClearValue: 1.0,
                 depthLoadOp: 'clear',
                 depthStoreOp: 'store',
             },
-        });
+        };
     }
 
-    private buildPassEncoder() {}
-
     render(scene: Scene) {
+
         scene.children.forEach((mesh) => {
             mesh.primitives.forEach((geometry) => {
                 this.draw(geometry, mesh);
             });
         });
-        // set buffer pour avec tout les attributes
-        // draw indexed si présence d'index
+        PrimitivCoreUtils.get_gPUDevice().queue.submit([this.commandEncoder.finish()])
     }
 
     draw(geometry: BufferGeometry, mesh: Mesh) {
-        //pas oublié l'index s'il y en a un
+        if (!geometry.renderPipeline   ) {
+            return;
+        }
+        if(!this.renderPass){
+            this.renderPass = this.commandEncoder.beginRenderPass(
+                this.gPURenderPassDescriptor,
+            );
+        }
+
+
+        this.renderPass.setPipeline(geometry.renderPipeline);
+        this.renderPass.setVertexBuffer(0,geometry.vertexBuffer)
+
+        if(geometry.index && geometry.indexBuffer && geometry.index.array){
+            //ToDo, change format according to eh arrayType and take carte the case when we have no index.
+            this.renderPass.setIndexBuffer(geometry.indexBuffer, 'uint16')
+            const arr = geometry.index.array as Uint16Array;
+            this.renderPass.drawIndexed(arr.length);
+            this.renderPass.end()
+        }else{
+            throw new Error("Implemente when we have no index")
+        }
+
     }
 }

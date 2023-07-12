@@ -27,13 +27,4 @@ export class PrimitivCoreUtils {
         }
         return this.gPUTextureFormat;
     }
-
-    static get_gPUContext(): GPUTextureFormat {
-        if (!this.gPUTextureFormat) {
-            throw Error(
-                'you must initialize the library with the init function',
-            );
-        }
-        return this.gPUTextureFormat;
-    }
 }
