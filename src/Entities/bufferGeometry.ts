@@ -32,7 +32,7 @@ class BufferAttributes {
 interface ArrayLikeObject {
     length: number;
 }
-  
+
 export class BufferAttribute {
     array?: ArrayBuffer;
     component?: number;

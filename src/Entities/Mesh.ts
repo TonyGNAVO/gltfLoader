@@ -11,7 +11,7 @@ export class Mesh {
         for (const bufferGeometry of this.primitives) {
             this.enableBuffergeometry(bufferGeometry);
             this.createVertexBuffer(bufferGeometry);
-            this.createIndexBuffer(bufferGeometry)
+            this.createIndexBuffer(bufferGeometry);
         }
     }
 
@@ -75,6 +75,7 @@ export class Mesh {
             offset += byteSize;
             offsetNumber += value.component;
             shaderLocation++;
+
             /* eslint-enable @typescript-eslint/no-unsafe-assignment */
         }
 
