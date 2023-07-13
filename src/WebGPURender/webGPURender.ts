@@ -26,11 +26,11 @@ export class WebGPURenderer {
       
         //____ création de la texture
         const texture: GPUTexture = this.gPUDevice.createTexture({
-            format: "depth24plus",
+            format: "depth32float",
             label: 'depth texture',
             size: {
-                width: 1024,
-                height: 1024,
+                width: 4096,
+                height: 512,
             },
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             //sampleCount : see the doc. It's about aliasing
@@ -41,21 +41,14 @@ export class WebGPURenderer {
         
         });
 
-        const colorTexture: GPUTexture = this.gPUDevice.createTexture({
-            format: PrimitivCoreUtils.get_gPUTextureFormat(),
-            label: 'color texture',
-            size: {
-                width: 1024,  // Spécifier la largeur souhaitée
-                height: 1024, // Spécifier la hauteur souhaitée
-            },
-            usage: GPUTextureUsage.RENDER_ATTACHMENT,
-        });
+        console.log(this.gPUCanvasContext.getCurrentTexture())
 
         this.gPURenderPassDescriptor = {
             colorAttachments: [
                 {
-                    view: colorTexture
-                        .createView(),
+                    view: this.gPUCanvasContext.getCurrentTexture().createView({
+                        
+                    }),
                     clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
                     loadOp: 'clear',
                     storeOp: 'store',
@@ -124,6 +117,7 @@ export class WebGPURenderer {
         this.renderPass.setVertexBuffer(0, geometry.vertexBuffer);
         
         if (geometry.index && geometry.indexBuffer && geometry.index.array) {
+            console.log("bonj")
             //ToDo, change format according to eh arrayType and take carte the case when we have no index.
             this.renderPass.setIndexBuffer(geometry.indexBuffer, 'uint16');
             const arr = geometry.index.array as Uint16Array;
@@ -139,7 +133,7 @@ export class WebGPURenderer {
         fov: number = (60 / 180) * Math.PI,
         near: number = 0.1,
         far: number = 100.0,
-        position = { x: 0, y: 0, z: 5 },
+        position = { x: 1, y: 3, z: 7 },
     ) {
         const center = vec3.fromValues(0, 0, 0);
         const up = vec3.fromValues(0, 1, 0);

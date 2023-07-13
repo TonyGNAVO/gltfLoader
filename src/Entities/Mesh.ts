@@ -108,7 +108,7 @@ export class Mesh {
             depthStencil: {
                 depthCompare: 'less',
                 depthWriteEnabled: true,
-                format: 'depth24plus',
+                format: 'depth32float',
             },
             primitive: { cullMode: 'back' },
         });
