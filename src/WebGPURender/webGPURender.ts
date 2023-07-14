@@ -8,6 +8,7 @@ import { mat4, vec3 } from 'gl-matrix';
 export class WebGPURenderer {
     private canvas: HTMLCanvasElement;
     private gPUDevice = PrimitivCoreUtils.get_gPUDevice();
+    private gPUFormat = PrimitivCoreUtils.get_gPUTextureFormat()
     private commandEncoder = this.gPUDevice.createCommandEncoder();
     private gPUCanvasContext: GPUCanvasContext;
     private depthTexture: GPUTexture;
@@ -20,13 +21,12 @@ export class WebGPURenderer {
     private pixelRatio = 2;
 
     constructor(descriptor: WebGPUDescriptor) {
-
         const context = descriptor.canvas.getContext('webgpu');
         if (!context) throw new Error();
-        this.gPUCanvasContext = context
+        this.gPUCanvasContext = context;
         context.configure({
-            device: PrimitivCoreUtils.get_gPUDevice(),
-            format: PrimitivCoreUtils.get_gPUTextureFormat(),
+            device: this.gPUDevice,
+            format: this.gPUFormat,
             alphaMode: 'opaque',
         });
 
@@ -47,12 +47,11 @@ export class WebGPURenderer {
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             //sampleCount : see the doc. It's about aliasing
         });
-        this.depthView = this.depthTexture.createView({label:"Depth view"});
+        this.depthView = this.depthTexture.createView({ label: 'Depth view' });
 
         //____ création de la texture de profondeur
-       this.renderTexture = this.gPUCanvasContext.getCurrentTexture();
-       this.renderView=this.renderTexture.createView()
-
+        this.renderTexture = this.gPUCanvasContext.getCurrentTexture();
+        this.renderView = this.renderTexture.createView();
 
         // Attachements
         this.gPURenderPassDescriptor = {
@@ -78,47 +77,47 @@ export class WebGPURenderer {
     }
 
     render(scene: Scene) {
+        this.updateTechnicalAttribute();
+        this.drawScene(scene);
+        this.executePassCommand();
+    }
 
-        this.updateAttachement()
-        this.commandEncoder = this.gPUDevice.createCommandEncoder();
-
-        this.renderPass = this.commandEncoder.beginRenderPass(
-            this.gPURenderPassDescriptor,
-        );
-
-        scene.children.forEach((mesh) => {
-            mesh.primitives.forEach((geometry) => {
-                this.draw(geometry, mesh);
-            });
-        });
-
+    private executePassCommand() {
         this.renderPass.end();
 
-        PrimitivCoreUtils.get_gPUDevice().queue.submit([
+       this.gPUDevice.queue.submit([
             this.commandEncoder.finish(),
         ]);
     }
 
-    private draw(geometry: BufferGeometry, mesh: Mesh) {
+    private drawScene(scene: Scene) {
+        scene.children.forEach((mesh) => {
+            mesh.primitives.forEach((geometry) => {
+                this.drawMesh(geometry, mesh);
+            });
+        });
+    }
+
+    private drawMesh(geometry: BufferGeometry, mesh: Mesh) {
         if (!geometry.renderPipeline) {
             return;
         }
 
         // Camera
         const cameraProjectionBuffer =
-            PrimitivCoreUtils.get_gPUDevice().createBuffer({
+            this.gPUDevice.createBuffer({
                 label: 'GPUBuffer for camera projection',
                 size: 4 * 4 * 4,
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
             });
 
-        PrimitivCoreUtils.get_gPUDevice().queue.writeBuffer(
+        this.gPUDevice.queue.writeBuffer(
             cameraProjectionBuffer,
             0,
             this.getProjectionMatrix(),
         );
 
-        const bGroup = PrimitivCoreUtils.get_gPUDevice().createBindGroup({
+        const bGroup = this.gPUDevice.createBindGroup({
             label: 'Group for renderPass',
             layout: geometry.renderPipeline.getBindGroupLayout(0),
             entries: [
@@ -176,9 +175,9 @@ export class WebGPURenderer {
         this.pixelRatio = pixelRatio;
     }
 
-    private updateAttachement(){
+    private updateTechnicalAttribute() {
         this.renderTexture = this.gPUCanvasContext.getCurrentTexture();
-        this.renderView=this.renderTexture.createView()
+        this.renderView = this.renderTexture.createView();
         this.gPURenderPassDescriptor = {
             colorAttachments: [
                 {
@@ -195,6 +194,11 @@ export class WebGPURenderer {
                 depthStoreOp: 'store',
             },
         };
+        this.commandEncoder = this.gPUDevice.createCommandEncoder();
+
+        this.renderPass = this.commandEncoder.beginRenderPass(
+            this.gPURenderPassDescriptor,
+        );
     }
     private enableCanvas() {
         window.addEventListener('resize', (e) => {
@@ -202,7 +206,7 @@ export class WebGPURenderer {
             this.size.height = window.innerHeight;
 
             // mise à jour du canvas
-            this.canvas.width = window.innerWidth *  this.pixelRatio;
+            this.canvas.width = window.innerWidth * this.pixelRatio;
             this.canvas.height = window.innerHeight * this.pixelRatio;
 
             // mise à jour de la depth texture
@@ -220,8 +224,5 @@ export class WebGPURenderer {
             //____ création de la depth view
             this.depthView = this.depthTexture.createView();
         });
-    }
-    private buildRenderPass(){
-
     }
 }
