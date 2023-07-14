@@ -15,28 +15,28 @@ export class WebGPURenderer {
     private renderTexture: GPUTexture;
     private renderView: GPUTextureView;
     private gPURenderPassDescriptor: GPURenderPassDescriptor;
-    private renderPass: GPURenderPassEncoder | null = null;
+    private renderPass: GPURenderPassEncoder;
     private size: Size = { width: 1920, height: 1080 };
     private pixelRatio = 2;
 
     constructor(descriptor: WebGPUDescriptor) {
-        this.canvas = descriptor.canvas;
-        this.enableCanvas();
 
-        this.canvas.width = this.size.width * this.pixelRatio;
-        this.canvas.height = this.size.height * this.pixelRatio;
         const context = descriptor.canvas.getContext('webgpu');
         if (!context) throw new Error();
-
+        this.gPUCanvasContext = context
         context.configure({
             device: PrimitivCoreUtils.get_gPUDevice(),
             format: PrimitivCoreUtils.get_gPUTextureFormat(),
             alphaMode: 'opaque',
         });
 
-        this.gPUCanvasContext = context;
+        this.canvas = descriptor.canvas;
+        this.enableCanvas();
 
-        //____ création de la texture
+        this.canvas.width = this.size.width * this.pixelRatio;
+        this.canvas.height = this.size.height * this.pixelRatio;
+
+        //____ création de la texture de rendu
         this.depthTexture = this.gPUDevice.createTexture({
             format: 'depth32float',
             label: 'depth texture',
@@ -47,15 +47,14 @@ export class WebGPURenderer {
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             //sampleCount : see the doc. It's about aliasing
         });
-        //____ création de la depth view
         this.depthView = this.depthTexture.createView({label:"Depth view"});
 
-        //____ création de la texture
+        //____ création de la texture de profondeur
        this.renderTexture = this.gPUCanvasContext.getCurrentTexture();
        this.renderView=this.renderTexture.createView()
 
 
-        //Attachements
+        // Attachements
         this.gPURenderPassDescriptor = {
             colorAttachments: [
                 {
@@ -72,13 +71,17 @@ export class WebGPURenderer {
                 depthStoreOp: 'store',
             },
         };
+
+        this.renderPass = this.commandEncoder.beginRenderPass(
+            this.gPURenderPassDescriptor,
+        );
     }
 
     render(scene: Scene) {
 
         this.updateAttachement()
-
         this.commandEncoder = this.gPUDevice.createCommandEncoder();
+
         this.renderPass = this.commandEncoder.beginRenderPass(
             this.gPURenderPassDescriptor,
         );
@@ -217,5 +220,8 @@ export class WebGPURenderer {
             //____ création de la depth view
             this.depthView = this.depthTexture.createView();
         });
+    }
+    private buildRenderPass(){
+
     }
 }
