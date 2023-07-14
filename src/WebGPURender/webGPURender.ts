@@ -12,6 +12,8 @@ export class WebGPURenderer {
     private gPUCanvasContext: GPUCanvasContext;
     private depthTexture: GPUTexture;
     private depthView: GPUTextureView;
+    private renderTexture: GPUTexture;
+    private renderView: GPUTextureView;
     private gPURenderPassDescriptor: GPURenderPassDescriptor;
     private renderPass: GPURenderPassEncoder | null = null;
     private size: Size = { width: 1920, height: 1080 };
@@ -45,17 +47,19 @@ export class WebGPURenderer {
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             //sampleCount : see the doc. It's about aliasing
         });
-
         //____ création de la depth view
-        this.depthView = this.depthTexture.createView();
+        this.depthView = this.depthTexture.createView({label:"Depth view"});
+
+        //____ création de la texture
+       this.renderTexture = this.gPUCanvasContext.getCurrentTexture();
+       this.renderView=this.renderTexture.createView()
+
 
         //Attachements
         this.gPURenderPassDescriptor = {
             colorAttachments: [
                 {
-                    view: this.gPUCanvasContext
-                        .getCurrentTexture()
-                        .createView(),
+                    view: this.renderView,
                     clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
                     loadOp: 'clear',
                     storeOp: 'store',
@@ -71,11 +75,22 @@ export class WebGPURenderer {
     }
 
     render(scene: Scene) {
+
+        this.updateAttachement()
+
+        this.commandEncoder = this.gPUDevice.createCommandEncoder();
+        this.renderPass = this.commandEncoder.beginRenderPass(
+            this.gPURenderPassDescriptor,
+        );
+
         scene.children.forEach((mesh) => {
             mesh.primitives.forEach((geometry) => {
                 this.draw(geometry, mesh);
             });
         });
+
+        this.renderPass.end();
+
         PrimitivCoreUtils.get_gPUDevice().queue.submit([
             this.commandEncoder.finish(),
         ]);
@@ -84,11 +99,6 @@ export class WebGPURenderer {
     draw(geometry: BufferGeometry, mesh: Mesh) {
         if (!geometry.renderPipeline) {
             return;
-        }
-        if (!this.renderPass) {
-            this.renderPass = this.commandEncoder.beginRenderPass(
-                this.gPURenderPassDescriptor,
-            );
         }
 
         // Camera
@@ -127,7 +137,7 @@ export class WebGPURenderer {
             this.renderPass.setIndexBuffer(geometry.indexBuffer, 'uint16');
             const arr = geometry.index.array as Uint16Array;
             this.renderPass.drawIndexed(arr.length);
-            this.renderPass.end();
+            // this.renderPass.end();
         } else {
             throw new Error('Implemente when we have no index');
         }
@@ -162,50 +172,71 @@ export class WebGPURenderer {
     setPixelRatio(pixelRatio: number) {
         this.pixelRatio = pixelRatio;
     }
+
+    private updateAttachement(){
+        this.renderTexture = this.gPUCanvasContext.getCurrentTexture();
+        this.renderView=this.renderTexture.createView()
+        this.gPURenderPassDescriptor = {
+            colorAttachments: [
+                {
+                    view: this.renderView,
+                    clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
+                    loadOp: 'clear',
+                    storeOp: 'store',
+                },
+            ],
+            depthStencilAttachment: {
+                view: this.depthView,
+                depthClearValue: 1.0,
+                depthLoadOp: 'clear',
+                depthStoreOp: 'store',
+            },
+        };
+    }
     private enableCanvas() {
-        window.addEventListener('resize', (e) => {
-            this.size.width = window.innerWidth;
-            this.size.height = window.innerHeight;
+        // window.addEventListener('resize', (e) => {
+        //     this.size.width = window.innerWidth;
+        //     this.size.height = window.innerHeight;
 
-            // mise à jour du canvas
-            this.canvas.width = window.innerWidth;
-            this.canvas.height = window.innerHeight;
+        //     // mise à jour du canvas
+        //     this.canvas.width = window.innerWidth;
+        //     this.canvas.height = window.innerHeight;
 
-            // mise à jour de la depth texture
-            this.depthTexture = this.gPUDevice.createTexture({
-                format: 'depth32float',
-                label: 'depth texture',
-                size: {
-                    width: this.size.width * this.pixelRatio,
-                    height: this.size.height * this.pixelRatio,
-                },
-                usage: GPUTextureUsage.RENDER_ATTACHMENT,
-                //sampleCount : see the doc. It's about aliasing
-            });
+        //     // mise à jour de la depth texture
+        //     this.depthTexture = this.gPUDevice.createTexture({
+        //         format: 'depth32float',
+        //         label: 'depth texture',
+        //         size: {
+        //             width: this.size.width * this.pixelRatio,
+        //             height: this.size.height * this.pixelRatio,
+        //         },
+        //         usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        //         //sampleCount : see the doc. It's about aliasing
+        //     });
 
-            //____ création de la depth view
-            this.depthView = this.depthTexture.createView();
+        //     //____ création de la depth view
+        //     this.depthView = this.depthTexture.createView();
 
-            // mise à jour des attachements
+        //     // mise à jour des attachements
 
-            this.gPURenderPassDescriptor = {
-                colorAttachments: [
-                    {
-                        view: this.gPUCanvasContext
-                            .getCurrentTexture()
-                            .createView(),
-                        clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
-                        loadOp: 'clear',
-                        storeOp: 'store',
-                    },
-                ],
-                depthStencilAttachment: {
-                    view: this.depthView,
-                    depthClearValue: 1.0,
-                    depthLoadOp: 'clear',
-                    depthStoreOp: 'store',
-                },
-            };
-        });
+        //     this.gPURenderPassDescriptor = {
+        //         colorAttachments: [
+        //             {
+        //                 view: this.gPUCanvasContext
+        //                     .getCurrentTexture()
+        //                     .createView(),
+        //                 clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
+        //                 loadOp: 'clear',
+        //                 storeOp: 'store',
+        //             },
+        //         ],
+        //         depthStencilAttachment: {
+        //             view: this.depthView,
+        //             depthClearValue: 1.0,
+        //             depthLoadOp: 'clear',
+        //             depthStoreOp: 'store',
+        //         },
+        //     };
+        // });
     }
 }

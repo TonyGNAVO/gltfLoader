@@ -19,14 +19,13 @@ PrimitivCoreUtils.init()
                     canvas,
                 });
                 scene = gltf.scenes[0];
-                tick()
+                tick();
             },
         );
     })
     .catch(() => {});
 
 const tick = () => {
-
     renderer.render(scene);
     requestAnimationFrame(tick);
 };
