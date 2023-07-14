@@ -1,7 +1,11 @@
 import { GLTF } from './Entities/gLTF';
 import { PrimitivCoreUtils } from './Entities/primitivCore';
+import { Scene } from './Entities/scene';
 import { GLTFLoader } from './GLTFLoader/gltfLoader';
 import { WebGPURenderer } from './WebGPURender/webGPURender';
+
+let renderer: WebGPURenderer;
+let scene: Scene;
 
 PrimitivCoreUtils.init()
     .then(() => {
@@ -11,11 +15,18 @@ PrimitivCoreUtils.init()
                 const canvas = document.querySelector(
                     '.webgpu',
                 ) as HTMLCanvasElement;
-                const renderer = new WebGPURenderer({
+                renderer = new WebGPURenderer({
                     canvas,
                 });
-                    renderer.render(gltf.scenes[0])
+                scene = gltf.scenes[0];
+                tick()
             },
         );
     })
     .catch(() => {});
+
+const tick = () => {
+
+    renderer.render(scene);
+    requestAnimationFrame(tick);
+};
