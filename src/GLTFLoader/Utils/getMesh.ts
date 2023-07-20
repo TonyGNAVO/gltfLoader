@@ -1,4 +1,4 @@
-import { Mesh } from '../../Entities/Mesh';
+import { primitiveMesh } from '../../Entities/primitiveMesh';
 import { BufferGeometry } from '../../Entities/bufferGeometry';
 import {
     GLTFAccessor,
@@ -15,7 +15,7 @@ export class GetMesh {
         GLTFBufferViews: GLTFBufferView[],
         buffers: GLTFBuffer[],
         resourceURL: string,
-    ): Promise<Mesh> {
+    ): Promise<primitiveMesh> {
         const primitives: BufferGeometry[] = [];
         for await (const primitive of gLTFMesh.primitives) {
             const bufferGeometry = await new GetBufferGeometry().execute(
@@ -27,7 +27,7 @@ export class GetMesh {
             );
             primitives.push(bufferGeometry);
         }
-        const mesh = new Mesh(primitives);
+        const mesh = new primitiveMesh(primitives);
         return mesh;
     }
 }

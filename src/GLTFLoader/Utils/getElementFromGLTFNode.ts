@@ -1,4 +1,4 @@
-import { Mesh } from '../../Entities/Mesh';
+import { primitiveMesh } from '../../Entities/primitiveMesh';
 import {
     GLTFAccessor,
     GLTFBuffer,
@@ -16,7 +16,7 @@ export class GetElementFromGLTFNode {
         gLTFBufferViews: GLTFBufferView[],
         buffers: GLTFBuffer[],
         resourceURL: string,
-    ): Promise<Mesh> {
+    ): Promise<primitiveMesh> {
         if (gLTFNode.mesh != undefined) {
             return await new GetMesh().execute(
                 meshes[gLTFNode.mesh],
@@ -26,7 +26,7 @@ export class GetElementFromGLTFNode {
                 resourceURL,
             );
         } else {
-            return new Mesh();
+            return new primitiveMesh();
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Mesh } from '../Entities/Mesh';
+import { primitiveMesh } from '../Entities/primitiveMesh';
 import { BufferGeometry } from '../Entities/bufferGeometry';
 import { PrimitivCoreUtils } from '../Entities/primitivCore';
 import { Scene } from '../Entities/scene';
@@ -93,7 +93,7 @@ export class WebGPURenderer {
         });
     }
 
-    private drawMesh(geometry: BufferGeometry, mesh: Mesh) {
+    private drawMesh(geometry: BufferGeometry, mesh: primitiveMesh) {
         if (!geometry.renderPipeline) {
             return;
         }
@@ -144,7 +144,7 @@ export class WebGPURenderer {
         fov: number = (60 / 180) * Math.PI,
         near: number = 0.1,
         far: number = 100.0,
-        position = { x: 1, y: 3, z: 7 },
+        position = { x: 0, y: 0, z: 7 },
     ) {
         const center = vec3.fromValues(0, 0, 0);
         const up = vec3.fromValues(0, 1, 0);

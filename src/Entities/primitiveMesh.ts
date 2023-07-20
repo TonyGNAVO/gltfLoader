@@ -3,7 +3,7 @@ import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
 
-export class Mesh {
+export class primitiveMesh {
     primitives: BufferGeometry[] = [];
 
     constructor(primitives: BufferGeometry[]) {
