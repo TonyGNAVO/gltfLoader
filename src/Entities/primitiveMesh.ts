@@ -2,20 +2,30 @@ import { BufferGeometry } from './bufferGeometry';
 import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
+import { Material } from './Material';
 
 export class primitiveMesh {
     primitives: BufferGeometry[] = [];
+    materials:Material[]=[]
 
-    constructor(primitives: BufferGeometry[]) {
+    constructor(primitives: BufferGeometry[],materials:Material[]) {
+
+        console.log(materials[0])
         this.primitives = primitives;
-        for (const bufferGeometry of this.primitives) {
-            this.enableBuffergeometry(bufferGeometry);
+        this.materials=materials
+        for (let i =0;i<this.primitives.length;i++) {
+            
+            const bufferGeometry =  this.primitives[i]
+            const material =  this.materials[i]
+
+            this.enableBuffergeometry(bufferGeometry,material);
             this.createVertexBuffer(bufferGeometry);
             this.createIndexBuffer(bufferGeometry);
         }
+        //exception si l'un plus grand que l'autre pour les tableaux
     }
 
-    private enableBuffergeometry(bufferGeometry: BufferGeometry) {
+    private enableBuffergeometry(bufferGeometry: BufferGeometry,material:Material) {
         const device = PrimitivCoreUtils.get_gPUDevice();
         const format = PrimitivCoreUtils.get_gPUTextureFormat();
 
@@ -86,9 +96,9 @@ export class primitiveMesh {
             },
         ];
 
-        // TODO: build a shader according to the attribute to get value into shader
+        
         // build renderPipeline
-        bufferGeometry.renderPipeline = device.createRenderPipeline({
+        material.renderPipeline = device.createRenderPipeline({
             vertex: {
                 entryPoint: 'vs_main',
                 module: device.createShaderModule({
@@ -204,5 +214,11 @@ export class primitiveMesh {
             const buff = source.slice(i * component, i * component + component);
             target.set(buff, i * vertexSize + offset);
         }
+    }
+
+
+    //méthode render
+    render(){
+    // parcourir la liste de buffergeometry et de material et de draw tout ça.
     }
 }

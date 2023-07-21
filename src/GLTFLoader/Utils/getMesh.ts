@@ -7,6 +7,7 @@ import {
     GLTFMesh,
 } from './gLTFLoaderUtils';
 import { GetBufferGeometry } from './getBufferGeometry';
+import { Material, meshBasicMaterial } from '../../Entities/Material';
 
 export class GetMesh {
     async execute(
@@ -17,6 +18,7 @@ export class GetMesh {
         resourceURL: string,
     ): Promise<primitiveMesh> {
         const primitives: BufferGeometry[] = [];
+        const material: Material[] = [];
         for await (const primitive of gLTFMesh.primitives) {
             const bufferGeometry = await new GetBufferGeometry().execute(
                 primitive,
@@ -26,8 +28,9 @@ export class GetMesh {
                 resourceURL,
             );
             primitives.push(bufferGeometry);
+            material.push(new meshBasicMaterial())
         }
-        const mesh = new primitiveMesh(primitives);
+        const mesh = new primitiveMesh(primitives,material);
         return mesh;
     }
 }

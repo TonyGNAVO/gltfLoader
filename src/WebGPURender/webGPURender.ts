@@ -4,6 +4,7 @@ import { PrimitivCoreUtils } from '../Entities/primitivCore';
 import { Scene } from '../Entities/scene';
 import { Size, WebGPUDescriptor } from './Utils/utils';
 import { mat4, vec3 } from 'gl-matrix';
+import { Material } from '../Entities/Material';
 
 export class WebGPURenderer {
     private canvas: HTMLCanvasElement;
@@ -87,14 +88,18 @@ export class WebGPURenderer {
 
     private drawScene(scene: Scene) {
         scene.children.forEach((mesh) => {
-            mesh.primitives.forEach((geometry) => {
-                this.drawMesh(geometry, mesh);
-            });
+
+            for (let i =0;i<mesh.primitives.length;i++) {
+            
+                const bufferGeometry =  mesh.primitives[i]
+                const material =  mesh.materials[i]
+                this.drawMesh(bufferGeometry,material);
+            }
         });
     }
 
-    private drawMesh(geometry: BufferGeometry, mesh: primitiveMesh) {
-        if (!geometry.renderPipeline) {
+    private drawMesh(geometry: BufferGeometry, material: Material) {
+        if (!material.renderPipeline) {
             return;
         }
 
@@ -113,7 +118,7 @@ export class WebGPURenderer {
 
         const bGroup = this.gPUDevice.createBindGroup({
             label: 'Group for renderPass',
-            layout: geometry.renderPipeline.getBindGroupLayout(0),
+            layout: material.renderPipeline.getBindGroupLayout(0),
             entries: [
                 {
                     binding: 0,
@@ -124,7 +129,7 @@ export class WebGPURenderer {
             ],
         });
 
-        this.renderPass.setPipeline(geometry.renderPipeline);
+        this.renderPass.setPipeline(material.renderPipeline);
         this.renderPass.setBindGroup(0, bGroup);
         this.renderPass.setVertexBuffer(0, geometry.vertexBuffer);
 
@@ -144,7 +149,7 @@ export class WebGPURenderer {
         fov: number = (60 / 180) * Math.PI,
         near: number = 0.1,
         far: number = 100.0,
-        position = { x: 0, y: 0, z: 7 },
+        position = { x: 3, y: 1, z: 7 },
     ) {
         const center = vec3.fromValues(0, 0, 0);
         const up = vec3.fromValues(0, 1, 0);
