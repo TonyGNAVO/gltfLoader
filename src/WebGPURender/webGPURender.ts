@@ -1,10 +1,7 @@
-import { primitiveMesh } from '../Entities/primitiveMesh';
-import { BufferGeometry } from '../Entities/bufferGeometry';
 import { PrimitivCoreUtils } from '../Entities/primitivCore';
 import { Scene } from '../Entities/scene';
 import { Size, WebGPUDescriptor } from './Utils/utils';
 import { mat4, vec3 } from 'gl-matrix';
-import { Material } from '../Entities/Material';
 
 export class WebGPURenderer {
     private canvas: HTMLCanvasElement;
@@ -73,6 +70,10 @@ export class WebGPURenderer {
         this.renderPass = this.commandEncoder.beginRenderPass(
             this.gPURenderPassDescriptor,
         );
+
+        //put the right size
+        this.setSize(window.innerWidth, window.innerHeight);
+        this.updateRenderTextureSize();
     }
 
     render(scene: Scene) {
@@ -88,60 +89,8 @@ export class WebGPURenderer {
 
     private drawScene(scene: Scene) {
         scene.children.forEach((mesh) => {
-
-            for (let i =0;i<mesh.primitives.length;i++) {
-            
-                const bufferGeometry =  mesh.primitives[i]
-                const material =  mesh.materials[i]
-                this.drawMesh(bufferGeometry,material);
-            }
+            mesh.draw(this.getProjectionMatrix(), this.renderPass);
         });
-    }
-
-    private drawMesh(geometry: BufferGeometry, material: Material) {
-        if (!material.renderPipeline) {
-            return;
-        }
-
-        // Camera
-        const cameraProjectionBuffer = this.gPUDevice.createBuffer({
-            label: 'GPUBuffer for camera projection',
-            size: 4 * 4 * 4,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-        });
-
-        this.gPUDevice.queue.writeBuffer(
-            cameraProjectionBuffer,
-            0,
-            this.getProjectionMatrix(),
-        );
-
-        const bGroup = this.gPUDevice.createBindGroup({
-            label: 'Group for renderPass',
-            layout: material.renderPipeline.getBindGroupLayout(0),
-            entries: [
-                {
-                    binding: 0,
-                    resource: {
-                        buffer: cameraProjectionBuffer,
-                    },
-                },
-            ],
-        });
-
-        this.renderPass.setPipeline(material.renderPipeline);
-        this.renderPass.setBindGroup(0, bGroup);
-        this.renderPass.setVertexBuffer(0, geometry.vertexBuffer);
-
-        if (geometry.index && geometry.indexBuffer && geometry.index.array) {
-            //ToDo, change format according to eh arrayType and take carte the case when we have no index.
-            this.renderPass.setIndexBuffer(geometry.indexBuffer, 'uint16');
-            const arr = geometry.index.array as Uint16Array;
-            this.renderPass.drawIndexed(arr.length);
-            // this.renderPass.end();
-        } else {
-            throw new Error('Implemente when we have no index');
-        }
     }
 
     private getProjectionMatrix(

@@ -28,9 +28,9 @@ export class GetMesh {
                 resourceURL,
             );
             primitives.push(bufferGeometry);
-            material.push(new meshBasicMaterial())
+            material.push(new meshBasicMaterial());
         }
-        const mesh = new primitiveMesh(primitives,material);
+        const mesh = new primitiveMesh(primitives, material);
         return mesh;
     }
 }

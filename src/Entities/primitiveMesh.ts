@@ -3,29 +3,31 @@ import fragmentShader from '../Shader/basic.frag.wgsl?raw';
 import vertexShader from '../Shader/basic.vert.wgsl?raw';
 import { PrimitivCoreUtils } from './primitivCore';
 import { Material } from './Material';
+import { WebgpuDrawable } from './webgpuDrawable';
 
-export class primitiveMesh {
+export class primitiveMesh implements WebgpuDrawable {
     primitives: BufferGeometry[] = [];
-    materials:Material[]=[]
+    materials: Material[] = [];
 
-    constructor(primitives: BufferGeometry[],materials:Material[]) {
-
-        console.log(materials[0])
+    constructor(primitives: BufferGeometry[], materials: Material[]) {
+        console.log(materials[0]);
         this.primitives = primitives;
-        this.materials=materials
-        for (let i =0;i<this.primitives.length;i++) {
-            
-            const bufferGeometry =  this.primitives[i]
-            const material =  this.materials[i]
+        this.materials = materials;
+        for (let i = 0; i < this.primitives.length; i++) {
+            const bufferGeometry = this.primitives[i];
+            const material = this.materials[i];
 
-            this.enableBuffergeometry(bufferGeometry,material);
+            this.enableBuffergeometry(bufferGeometry, material);
             this.createVertexBuffer(bufferGeometry);
             this.createIndexBuffer(bufferGeometry);
         }
         //exception si l'un plus grand que l'autre pour les tableaux
     }
 
-    private enableBuffergeometry(bufferGeometry: BufferGeometry,material:Material) {
+    private enableBuffergeometry(
+        bufferGeometry: BufferGeometry,
+        material: Material,
+    ) {
         const device = PrimitivCoreUtils.get_gPUDevice();
         const format = PrimitivCoreUtils.get_gPUTextureFormat();
 
@@ -96,7 +98,6 @@ export class primitiveMesh {
             },
         ];
 
-        
         // build renderPipeline
         material.renderPipeline = device.createRenderPipeline({
             vertex: {
@@ -216,9 +217,60 @@ export class primitiveMesh {
         }
     }
 
+    draw(camera: Float32Array, renderpass: GPURenderPassEncoder) {
+        for (let i = 0; i < this.primitives.length; i++) {
+            const bufferGeometry = this.primitives[i];
+            const material = this.materials[i];
+            this.drawMesh(bufferGeometry, material, camera, renderpass);
+        }
+    }
 
-    //méthode render
-    render(){
-    // parcourir la liste de buffergeometry et de material et de draw tout ça.
+    private drawMesh(
+        geometry: BufferGeometry,
+        material: Material,
+        camera: Float32Array,
+        renderPass: GPURenderPassEncoder,
+    ) {
+        if (!material.renderPipeline) {
+            return;
+        }
+
+        const gPUDevice = PrimitivCoreUtils.get_gPUDevice();
+
+        // Camera
+        const cameraProjectionBuffer = gPUDevice.createBuffer({
+            label: 'GPUBuffer for camera projection',
+            size: 4 * 4 * 4,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        });
+
+        gPUDevice.queue.writeBuffer(cameraProjectionBuffer, 0, camera);
+
+        const bGroup = gPUDevice.createBindGroup({
+            label: 'Group for renderPass',
+            layout: material.renderPipeline.getBindGroupLayout(0),
+            entries: [
+                {
+                    binding: 0,
+                    resource: {
+                        buffer: cameraProjectionBuffer,
+                    },
+                },
+            ],
+        });
+
+        renderPass.setPipeline(material.renderPipeline);
+        renderPass.setBindGroup(0, bGroup);
+        renderPass.setVertexBuffer(0, geometry.vertexBuffer);
+
+        if (geometry.index && geometry.indexBuffer && geometry.index.array) {
+            //ToDo, change format according to eh arrayType and take carte the case when we have no index.
+            renderPass.setIndexBuffer(geometry.indexBuffer, 'uint16');
+            const arr = geometry.index.array as Uint16Array;
+            renderPass.drawIndexed(arr.length);
+            // this.renderPass.end();
+        } else {
+            throw new Error('Implemente when we have no index');
+        }
     }
 }
